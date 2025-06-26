@@ -4,10 +4,127 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <title>Noli Beauty Search - AI-Powered Product Recommendations</title>
+    <script>
+(function () {
+  function init() {
+    window.poolInject = "poolContainer";
+    if (!document.getElementById("poolContainer")) {
+      var d = document.createElement("div");
+      d.id = "poolContainer";
+      document.body.appendChild(d);
+    }
+    if (typeof React === "undefined") {
+      var c = document.createElement("script");
+      c.src = "https://unpkg.com/react@18/umd/react.production.min.js";
+      c.onload = function () {
+        if (typeof ReactDOM === "undefined") {
+          var rd = document.createElement("script");
+          rd.src =
+            "https://unpkg.com/react-dom@18/umd/react-dom.production.min.js";
+          rd.onload = w;
+          document.head.appendChild(rd);
+        } else {
+          w();
+        }
+      };
+      document.head.appendChild(c);
+    } else {
+      if (typeof ReactDOM === "undefined") {
+        var rd = document.createElement("script");
+        rd.src = "https://unpkg.com/react-dom@18/umd/react-dom.production.min.js";
+        rd.onload = w;
+        document.head.appendChild(rd);
+      } else {
+        w();
+      }
+    }
+    function w() {
+      var s = document.createElement("script");
+      s.src = "http://localhost:5173/src/main.tsx";
+      s.type = "module";
+      document.head.appendChild(s);
+    }
+  }
+  
+  if (document.body) {
+    init();
+  } else {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      // Fallback for edge cases
+      var checkBody = setInterval(function() {
+        if (document.body) {
+          clearInterval(checkBody);
+          init();
+        }
+      }, 10);
+    }
+  }
+})();
+
+
+    </script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Example of how to embed the Noli search widget -->
+    <script type="module">
+      // Example 1: Programmatic initialization
+      import PoolWidget from './src/widget.tsx'
+      
+      // Floating search button (appears on all pages)
+      const floatingWidget = new PoolWidget({
+        containerId: 'noli-floating-search',
+        variant: 'floating',
+        apiUrl: 'http://localhost:8000'
+      })
+      floatingWidget.mount()
+      
+      // Minimal search bar for header/navigation
+      const headerWidget = new PoolWidget({
+        containerId: 'noli-header-search',
+        variant: 'minimal',
+        apiUrl: 'http://localhost:8000'
+      })
+      headerWidget.mount()
+    </script>
+    
+    <!-- Example 2: Declarative initialization via data attributes -->
+    <!-- 
+    <script 
+      src="/path/to/widget.js" 
+      data-variant="floating"
+      data-api-url="https://your-api.noli.com"
+      data-theme="light">
+    </script>
+    -->
+    <div className="flex items-center justify-center p-4 min-h-screen">
+      <div className="w-full max-w-2xl">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold tracking-tight mb-2">
+            Noli Beauty Search
+          </h1>
+          <p className="text-muted-foreground mb-6">
+            AI-powered beauty marketplace with personalized product recommendations
+          </p>
+          <div id="poolContainer"></div>
+        </div>
+        
+        <div className="mt-8 text-center text-sm text-muted-foreground space-y-2">
+          <p className="text-xs">
+            Try searching for: "products for dry skin", "best anti-aging serums", or "sensitive skin cleanser"
+          </p>
+        </div>
+      </div>
+    </div>
+
+    
+    <!-- Designated injection points -->
+    <div id="noli-floating-search"></div>
+    <div id="noli-header-search" style="margin: 20px;"></div>
+
   </body>
 </html>

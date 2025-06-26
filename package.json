@@ -7,9 +7,10 @@
     "test": "tests"
   },
   "scripts": {
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run watch:liz\"",
     "dev:backend": "poetry run uvicorn app.main:app --reload --port 8000",
     "dev:frontend": "cd frontend && npm run dev",
+    "watch:liz": "cd frontend && npm run watch:liz",
     "install:all": "poetry install && cd frontend && npm install",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

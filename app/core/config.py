@@ -31,10 +31,16 @@ class Settings(BaseSettings):
     # Environment
     environment: str = "development"
     debug: bool = True
+    
+    # Letta Configuration
+    letta_base_url: str = "http://localhost:8283"
+    openai_api_key: Optional[str] = None
+    anthropic_api_key: Optional[str] = None
+    gemini_api_key: Optional[str] = None
 
     class Config:
         env_file = ".env"
-        case_sensitive = True
+        case_sensitive = False
 
 
 settings = Settings() 

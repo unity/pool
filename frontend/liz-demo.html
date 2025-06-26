@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liz Beauty Search - WebComponent Demo</title>
+  <link rel="stylesheet" href="./liz-demo.css">
+</head>
+<body>
+  <div class="demo-container">
+    <div class="demo-header">
+      <h1 class="demo-title">Liz Beauty Search</h1>
+      <p class="demo-subtitle">AI-powered beauty product recommendations as a WebComponent</p>
+      <p>A self-contained, embeddable search widget for the Noli.com platform</p>
+    </div>
+
+    <div class="demo-section">
+      <h3>🚀 Quick Start</h3>
+      <p>Simply include the script and use the <code>&lt;liz-search&gt;</code> custom element:</p>
+      <div class="code-block">
+&lt;script src="./liz-search-widget.js"&gt;&lt;/script&gt;
+&lt;liz-search variant="floating" api-url="http://localhost:8000"&gt;&lt;/liz-search&gt;
+      </div>
+    </div>
+    <div class="demo-section">
+      <h3>🔍 Try It Out</h3>
+      <p>Click any of the search buttons above and try these queries:</p>
+      <ul>
+        <li>"Products for dry sensitive skin"</li>
+        <li>"Best anti-aging serums with vitamin C"</li>
+        <li>"Gentle cleanser for acne-prone skin"</li>
+        <li>"What ingredients help with dark spots?"</li>
+        <li>"Moisturizer for oily skin under $30"</li>
+      </ul>
+    </div>
+
+    <div class="demo-section">
+      <h3>✨ Features</h3>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <div class="feature-title">AI-Powered</div>
+          <div class="feature-description">Natural language processing for beauty queries</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <div class="feature-title">Mobile-First</div>
+          <div class="feature-description">Fullscreen overlay on mobile devices</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <div class="feature-title">Multiple Variants</div>
+          <div class="feature-description">Floating, minimal, and default UI options</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛍️</div>
+          <div class="feature-title">Product Cards</div>
+          <div class="feature-description">Rich product recommendations with ratings</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔧</div>
+          <div class="feature-title">Easy Integration</div>
+          <div class="feature-description">Drop-in WebComponent, no dependencies</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧪</div>
+          <div class="feature-title">Quiz Integration</div>
+          <div class="feature-description">Call-to-action for personalized recommendations</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h3>🎯 UI Variants</h3>
+      <div class="demo-grid">
+        <div class="variant-demo">
+          <h4>Floating Button</h4>
+          <p>Perfect for site-wide availability. Appears as a fixed button in the bottom-right corner.</p>
+          <liz-search variant="floating" api-url="http://localhost:8000"></liz-search>
+          <div class="code-block">
+&lt;liz-search variant="floating"&gt;&lt;/liz-search&gt;
+          </div>
+        </div>
+        
+        <div class="variant-demo">
+          <h4>Minimal Bar</h4>
+          <p>Great for headers and navigation areas. Subtle and space-efficient.</p>
+          <liz-search variant="minimal" api-url="http://localhost:8000"></liz-search>
+          <div class="code-block">
+&lt;liz-search variant="minimal"&gt;&lt;/liz-search&gt;
+          </div>
+        </div>
+        
+        <div class="variant-demo">
+          <h4>Default Button</h4>
+          <p>Prominent call-to-action for landing pages and main content areas.</p>
+          <liz-search variant="default" api-url="http://localhost:8000"></liz-search>
+          <div class="code-block">
+&lt;liz-search variant="default"&gt;&lt;/liz-search&gt;
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h3>⚙️ Configuration</h3>
+      <p>Customize the widget behavior using HTML attributes:</p>
+      <div class="code-block">
+&lt;!-- Full configuration example --&gt;
+&lt;liz-search 
+  variant="floating"
+  api-url="https://api.noli.com"
+  theme="light"&gt;
+&lt;/liz-search&gt;
+
+&lt;!-- Production example --&gt;
+&lt;liz-search 
+  variant="minimal"
+  api-url="https://api.noli.com"&gt;
+&lt;/liz-search&gt;
+      </div>
+      
+      <h4>Available Attributes:</h4>
+      <ul>
+        <li><strong>variant</strong>: "floating" | "minimal" | "default" (default: "floating")</li>
+        <li><strong>api-url</strong>: Backend API URL (default: "http://localhost:8000")</li>
+        <li><strong>theme</strong>: "light" | "dark" (default: "light")</li>
+      </ul>
+    </div>
+
+
+    <div class="demo-section">
+      <h3>📦 Integration Examples</h3>
+      
+      <h4>E-commerce Site Header:</h4>
+      <div class="code-block">
+&lt;header&gt;
+  &lt;nav&gt;
+    &lt;logo&gt;Noli&lt;/logo&gt;
+    &lt;liz-search variant="minimal"&gt;&lt;/liz-search&gt;
+  &lt;/nav&gt;
+&lt;/header&gt;
+      </div>
+      
+      <h4>Blog Sidebar:</h4>
+      <div class="code-block">
+&lt;aside class="sidebar"&gt;
+  &lt;h3&gt;Find Products&lt;/h3&gt;
+  &lt;liz-search variant="default"&gt;&lt;/liz-search&gt;
+&lt;/aside&gt;
+      </div>
+      
+      <h4>Landing Page CTA:</h4>
+      <div class="code-block">
+&lt;section class="hero"&gt;
+  &lt;h1&gt;Discover Your Perfect Beauty Routine&lt;/h1&gt;
+  &lt;liz-search variant="default"&gt;&lt;/liz-search&gt;
+&lt;/section&gt;
+      </div>
+    </div>
+  </div>
+
+  <!-- Load the Liz WebComponent -->
+  <script src="./dist/liz-search-widget.js"></script>
+</body>
+</html> 

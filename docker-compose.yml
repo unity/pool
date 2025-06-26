@@ -16,5 +16,19 @@ services:
       timeout: 5s
       retries: 5
 
+  letta:
+    image: letta/letta:latest
+    container_name: pool_letta
+    ports:
+      - "8283:8283"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    volumes:
+      - ~/.letta/.persist/pgdata:/var/lib/postgresql/data
+    depends_on:
+      - postgres
+
 volumes:
   postgres_data: 

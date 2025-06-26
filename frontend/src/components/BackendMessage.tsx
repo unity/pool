@@ -6,7 +6,11 @@ interface BackendResponse {
   message: string
 }
 
-export function BackendMessage() {
+interface BackendMessageProps {
+  apiUrl?: string
+}
+
+export function BackendMessage({ apiUrl = 'http://localhost:8000' }: BackendMessageProps) {
   const [message, setMessage] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
@@ -16,7 +20,7 @@ export function BackendMessage() {
     setError('')
     
     try {
-      const response = await fetch('http://localhost:8000/')
+      const response = await fetch(`${apiUrl}/`)
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
@@ -31,7 +35,7 @@ export function BackendMessage() {
 
   useEffect(() => {
     fetchMessage()
-  }, [])
+  }, [apiUrl])
 
   return (
     <Card className="w-full max-w-md mx-auto">
