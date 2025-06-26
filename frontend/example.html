@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pool Widget Example</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f7fafc;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .widget-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .code-section {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        .api-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .api-method {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        .api-method h4 {
+            margin: 0 0 10px 0;
+            color: #2d3748;
+        }
+        .api-method code {
+            background: #edf2f7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #2b6cb0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Pool Widget Integration Example</h1>
+            <p>This page demonstrates how to integrate the Pool Widget into any website.</p>
+        </div>
+
+        <div class="content">
+            <div class="widget-section">
+                <h3>Widget Preview</h3>
+                <p>The widget will appear below:</p>
+                <!-- The widget will be injected here -->
+            </div>
+
+            <div class="code-section">
+                <h3>Integration Code</h3>
+                <pre><code>&lt;!-- Add this to your HTML head --&gt;
+&lt;script src="https://your-domain.com/injector.min.js"&gt;&lt;/script&gt;
+
+&lt;!-- Configure the widget (optional) --&gt;
+&lt;script&gt;
+window.PoolWidget = {
+    config: {
+        backendUrl: 'https://your-backend.com',
+        containerId: 'my-custom-container',
+        width: '100%',
+        height: 'auto',
+        minHeight: '400px'
+    }
+};
+&lt;/script&gt;
+
+&lt;!-- The widget will auto-inject into the body --&gt;</code></pre>
+            </div>
+        </div>
+
+        <div class="api-section">
+            <h3>JavaScript API</h3>
+            <p>You can control the widget programmatically:</p>
+            
+            <div class="api-method">
+                <h4>Refresh the widget</h4>
+                <code>window.PoolWidget.api.refresh()</code>
+            </div>
+            
+            <div class="api-method">
+                <h4>Update configuration</h4>
+                <code>window.PoolWidget.api.setConfig({ backendUrl: 'https://new-backend.com' })</code>
+            </div>
+            
+            <div class="api-method">
+                <h4>Remove the widget</h4>
+                <code>window.PoolWidget.api.destroy()</code>
+            </div>
+        </div>
+
+        <div class="api-section">
+            <h3>Try the API</h3>
+            <p>Test the widget controls:</p>
+            <button onclick="window.PoolWidget.api.refresh()" style="margin-right: 10px; padding: 8px 16px; background: #4299e1; color: white; border: none; border-radius: 4px; cursor: pointer;">Refresh Widget</button>
+            <button onclick="window.PoolWidget.api.destroy()" style="margin-right: 10px; padding: 8px 16px; background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer;">Destroy Widget</button>
+            <button onclick="location.reload()" style="padding: 8px 16px; background: #38a169; color: white; border: none; border-radius: 4px; cursor: pointer;">Reload Page</button>
+        </div>
+    </div>
+
+    <!-- Load the injector -->
+    <script src="dist/injector.js"></script>
+    
+    <!-- Optional: Configure the widget -->
+    <script>
+        // You can customize the widget configuration here
+        window.PoolWidget = {
+            config: {
+                backendUrl: 'http://localhost:8000',
+                containerId: 'pool-widget-container',
+                width: '100%',
+                height: 'auto',
+                minHeight: '400px'
+            }
+        };
+    </script>
+</body>
+</html> 
