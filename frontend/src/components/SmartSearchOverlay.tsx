@@ -123,7 +123,7 @@ export function SmartSearchOverlay({
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Ask about ingredients, skin concerns, or specific products..."
+                placeholder="I'm Liz, ask me anything..."
                 className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent text-base"
                 autoFocus
               />

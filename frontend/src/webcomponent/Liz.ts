@@ -181,7 +181,7 @@ class LizSearchWidget extends HTMLElement {
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 16px;
+          padding: 0;
           animation: liz-fade-in 0.2s ease-out;
         }
 
@@ -544,11 +544,11 @@ class LizSearchWidget extends HTMLElement {
   private get_trigger_html() {
     switch (this.variant) {
       case 'floating':
-        return `<button class="liz-trigger-floating" title="Search beauty products">${searchIcon}</button>`
+        return `<button class="liz-trigger-floating" title="I'm Liz, ask me anything!">${searchIcon}</button>`
       case 'minimal':
         return `<button class="liz-trigger-minimal">${searchIcon} Search products...</button>`
       default:
-        return `<button class="liz-trigger-default">${searchIcon} Search Beauty Products</button>`
+        return `<button class="liz-trigger-default">${searchIcon} I'm Liz, ask me anything!</button>`
     }
   }
 
@@ -574,7 +574,7 @@ class LizSearchWidget extends HTMLElement {
             <input 
               type="text" 
               class="liz-search-input" 
-              placeholder="Ask about ingredients, skin concerns, or specific products..."
+              placeholder="My skin is dehydrated, help me..."
               autocomplete="off"
             />
             <button class="liz-search-button" type="submit">

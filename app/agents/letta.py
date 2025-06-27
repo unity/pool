@@ -32,41 +32,57 @@ class LettaAgent:
             raise RuntimeError("Letta client not available")
         return self._client
     
-    async def create_agent(self, name: str, description: str, instructions: str) -> Dict[str, Any]:
+    def create_agent(self, name: str, description: str, instructions: str) -> Dict[str, Any]:
         """Create a new Letta agent"""
         client = self._ensure_client()
         
         try:
+            # Create agent with proper memory blocks and configuration
             agent = client.agents.create(
                 name=name,
                 description=description,
-                instructions=instructions
+                memory_blocks=[
+                    {
+                        "label": "human",
+                        "value": "User information will be stored here as we learn about them."
+                    },
+                    {
+                        "label": "persona", 
+                        "value": instructions
+                    }
+                ],
+                model="openai/gpt-4o-mini",
+                embedding="openai/text-embedding-3-small",
+                include_base_tools=True
             )
-            return agent
+            # Convert AgentState to dict for consistent return type
+            return agent.dict() if hasattr(agent, 'dict') else dict(agent)
         except Exception as e:
             raise RuntimeError(f"Failed to create agent: {str(e)}")
     
-    async def list_agents(self) -> List[Dict[str, Any]]:
+    def list_agents(self) -> List[Dict[str, Any]]:
         """List all available agents"""
         client = self._ensure_client()
         
         try:
-            agents =  client.agents.list()
-            return agents.data if hasattr(agents, 'data') else agents
+            agents = client.agents.list()
+            # API returns List[AgentState] directly, convert to dict for consistency
+            return [agent.dict() if hasattr(agent, 'dict') else dict(agent) for agent in agents]
         except Exception as e:
             raise RuntimeError(f"Failed to list agents: {str(e)}")
     
-    async def get_agent(self, agent_id: str) -> Dict[str, Any]:
+    def get_agent(self, agent_id: str) -> Dict[str, Any]:
         """Get a specific agent by ID"""
         client = self._ensure_client()
         
         try:
             agent = client.agents.retrieve(agent_id)
-            return agent
+            # Convert AgentState to dict for consistent return type
+            return agent.dict() if hasattr(agent, 'dict') else dict(agent)
         except Exception as e:
             raise RuntimeError(f"Failed to get agent {agent_id}: {str(e)}")
     
-    async def delete_agent(self, agent_id: str) -> bool:
+    def delete_agent(self, agent_id: str) -> bool:
         """Delete an agent by ID"""
         client = self._ensure_client()
         
@@ -76,7 +92,7 @@ class LettaAgent:
         except Exception as e:
             raise RuntimeError(f"Failed to delete agent {agent_id}: {str(e)}")
     
-    async def chat_with_agent(
+    def chat_with_agent(
         self, 
         agent_id: str, 
         message: str, 
@@ -89,28 +105,48 @@ class LettaAgent:
             if stream:
                 response = client.agents.messages.create_stream(
                     agent_id=agent_id,
-                    content=message
+                    messages=[{"role": "user", "content": message}]
                 )
             else:
                 response = client.agents.messages.create(
                     agent_id=agent_id,
-                    content=message
+                    messages=[{"role": "user", "content": message}]
                 )
-            return response
+            
+            # Handle response properly - extract assistant messages
+            if hasattr(response, 'messages'):
+                assistant_messages = []
+                for msg in response.messages:
+                    if hasattr(msg, 'message_type') and msg.message_type == "assistant_message":
+                        assistant_messages.append({
+                            "content": msg.content,
+                            "timestamp": getattr(msg, 'created_at', None),
+                            "message_type": msg.message_type
+                        })
+                
+                return {
+                    "messages": assistant_messages,
+                    "full_response": response.dict() if hasattr(response, 'dict') else dict(response)
+                }
+            
+            return response.dict() if hasattr(response, 'dict') else dict(response)
         except Exception as e:
             raise RuntimeError(f"Failed to chat with agent {agent_id}: {str(e)}")
     
-    async def get_agent_messages(self, agent_id: str) -> List[Dict[str, Any]]:
+    def get_agent_messages(self, agent_id: str) -> List[Dict[str, Any]]:
         """Get message history for an agent"""
         client = self._ensure_client()
         
         try:
             messages = client.agents.messages.list(agent_id)
-            return messages.data if hasattr(messages, 'data') else messages
+            # Convert message objects to dicts if needed
+            if hasattr(messages, '__iter__'):
+                return [msg.dict() if hasattr(msg, 'dict') else dict(msg) for msg in messages]
+            return messages
         except Exception as e:
             raise RuntimeError(f"Failed to get messages for agent {agent_id}: {str(e)}")
     
-    async def clear_agent_messages(self, agent_id: str) -> bool:
+    def clear_agent_messages(self, agent_id: str) -> bool:
         """Clear message history for an agent"""
         client = self._ensure_client()
         
@@ -128,22 +164,22 @@ letta_agent = LettaAgent()
 # Pure functions for agent operations
 async def create_agent(name: str, description: str, instructions: str) -> Dict[str, Any]:
     """Create a new Letta agent - pure function wrapper"""
-    return await letta_agent.create_agent(name, description, instructions)
+    return letta_agent.create_agent(name, description, instructions)
 
 
 async def list_agents() -> List[Dict[str, Any]]:
     """List all agents - pure function wrapper"""
-    return await letta_agent.list_agents()
+    return letta_agent.list_agents()
 
 
 async def get_agent(agent_id: str) -> Dict[str, Any]:
     """Get agent by ID - pure function wrapper"""
-    return await letta_agent.get_agent(agent_id)
+    return letta_agent.get_agent(agent_id)
 
 
 async def delete_agent(agent_id: str) -> bool:
     """Delete agent by ID - pure function wrapper"""
-    return await letta_agent.delete_agent(agent_id)
+    return letta_agent.delete_agent(agent_id)
 
 
 async def chat_with_agent(
@@ -152,17 +188,17 @@ async def chat_with_agent(
     stream: bool = False
 ) -> Dict[str, Any]:
     """Chat with agent - pure function wrapper"""
-    return await letta_agent.chat_with_agent(agent_id, message, stream)
+    return letta_agent.chat_with_agent(agent_id, message, stream)
 
 
 async def get_agent_messages(agent_id: str) -> List[Dict[str, Any]]:
     """Get agent messages - pure function wrapper"""
-    return await letta_agent.get_agent_messages(agent_id)
+    return letta_agent.get_agent_messages(agent_id)
 
 
 async def clear_agent_messages(agent_id: str) -> bool:
     """Clear agent messages - pure function wrapper"""
-    return await letta_agent.clear_agent_messages(agent_id)
+    return letta_agent.clear_agent_messages(agent_id)
 
 
 # Beauty search specific functions
@@ -226,11 +262,16 @@ async def search_beauty_products(query: str) -> Dict[str, Any]:
             stream=False
         )
         
+        # Extract the assistant's response content
+        assistant_content = ""
+        if "messages" in response and response["messages"]:
+            assistant_content = response["messages"][0].get("content", "")
+        
         return {
-            "agent_response": response.get("message", ""),
+            "agent_response": assistant_content,
             "agent_id": agent_id,
-            "timestamp": response.get("timestamp"),
-            "metadata": response.get("metadata")
+            "timestamp": response.get("messages", [{}])[0].get("timestamp") if response.get("messages") else None,
+            "full_response": response
         }
         
     except Exception as e:

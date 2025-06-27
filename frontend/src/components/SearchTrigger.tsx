@@ -50,7 +50,7 @@ export function SearchTrigger({
             className={`bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white ${className}`}
           >
             <img src={searchIcon} alt="Search" className="w-6 h-6" />
-            Search Beauty Products!
+            I'm Liz, ask me anything!
           </Button>
         )
     }

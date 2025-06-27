@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     api_v1_str: str = "/api/v1"
     
     # CORS
-    backend_cors_origins: List[str] = ["http://localhost:3000", "http://localhost:5173", "http://localhost:5174"]
+    backend_cors_origins: List[str] = ["*", "http://localhost:3000", "http://localhost:5173", "http://localhost:5174"]
 
     @validator("backend_cors_origins", pre=True)
     def assemble_cors_origins(cls, v):
