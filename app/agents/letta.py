@@ -7,6 +7,8 @@ import asyncio
 from enum import Enum
 from app.services.rag_service import RAGService
 from app.schemas.rag import RAGQuestion, RAGAnswer
+import logging
+LOGGER = logging.getLogger(__name__)
 
 
 class BeautyConcern(str, Enum):
@@ -867,19 +869,20 @@ Be conversational, helpful, and educational. Focus on evidence-based recommendat
     except Exception as e:
         raise RuntimeError(f"Failed to get or create beauty search agent: {str(e)}")
 
-
 async def search_beauty_products(query: str, concern_type: Optional[str] = None) -> Dict[str, Any]:
     """Search for beauty products using RAG pipeline with rephrasing and summarization"""
     try:
         # Step 1: Rephrase the query for optimal RAG search
         rephrased_query = await rephrase_query(query)
-        
+        LOGGER.info(rephrased_query)
         # Step 2: Detect concern type if not provided (simple keyword matching)
         if not concern_type:
             concern_type = _detect_concern_type(query)
         
+        LOGGER.info(concern_type)
         # Step 3: Get RAG response using the rephrased query
         rag_response = await get_rag_response(rephrased_query, concern_type)
+        LOGGER.info(rag_response)
         
         # Step 4: Summarize the response with context
         summarized_response = await summarize_response(

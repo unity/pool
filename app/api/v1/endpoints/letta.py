@@ -12,7 +12,7 @@ from app.agents.letta import (
     process_beauty_request,
     get_available_agents,
     initialize_agent_system,
-    get_rag_response
+    simulate_vertex_ai_rag
 )
 from app.schemas.letta import (
     AgentCreateRequest,
@@ -35,6 +35,8 @@ from app.schemas.letta import (
     AgentInitializationRequest,
     AgentInitializationResponse
 )
+import logging
+LOGGER = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -212,7 +214,7 @@ async def smart_search(request: SearchRequest) -> SearchResponse:
     try:
         # Use real Letta agent for beauty product search
         search_result = await search_beauty_products(request.query)
-        
+        LOGGER.info(search_result)
         # Mock product recommendations for demo
         mock_products = [
             ProductRecommendation(
@@ -377,7 +379,7 @@ async def search_knowledge_base(request: RAGSearchRequest) -> RAGSearchResponse:
     """Search the beauty knowledge base using RAG"""
     try:
         # Perform RAG search
-        results = await get_rag_response(
+        results = await simulate_vertex_ai_rag(
             query=request.query,
             concern_type=request.concern_type
         )
