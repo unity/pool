@@ -35,8 +35,9 @@ from app.schemas.letta import (
     AgentInitializationRequest,
     AgentInitializationResponse
 )
-import logging
-LOGGER = logging.getLogger(__name__)
+from app.core.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 router = APIRouter()
 
@@ -214,31 +215,32 @@ async def smart_search(request: SearchRequest) -> SearchResponse:
     try:
         # Use real Letta agent for beauty product search
         search_result = await search_beauty_products(request.query)
-        LOGGER.info(search_result)
+        # logger.info("Search Results:")
+        # logger.info(search_result)
         # Mock product recommendations for demo
         mock_products = [
             ProductRecommendation(
                 id="prod-001",
-                name="Hydrating Serum",
-                brand="Beauty Brand",
+                name="La Roche-Posay Toleriane Sensitive Cream",
+                brand="LaRoche Posay",
                 price=29.99,
                 rating=4.5,
                 review_count=1250,
-                image_url="https://example.com/serum.jpg",
-                description="Intense hydration for all skin types",
-                why_recommended="Perfect for your hydration needs based on your query",
-                learn_more_url="/products/hydrating-serum"
+                image_url="http://localhost:5173/images/products/cream.webp",
+                description="Calm and fortify sensitive skin, for a complexion that feels balanced and deeply nourished.",
+                why_recommended="Perfect for your hydration needs",
+                learn_more_url="https://noli.com/products/la-roche-posay-toleriane-sensitive-cream",
             )
         ]
-        
+
         return SearchResponse(
             query=request.query,
-            explanation=f"Based on your query '{request.query}', here are personalized recommendations:",
-            agent_response=search_result.get("agent_response", ""),
+            explanation=search_result.get("summary", ""),
+            agent_response=search_result.get("final_response", ""),
             agent_id=search_result.get("agent_id", ""),
-            products=mock_products
+            products=mock_products,
         )
-        
+
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

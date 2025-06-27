@@ -574,7 +574,7 @@ class LizSearchWidget extends HTMLElement {
             <input 
               type="text" 
               class="liz-search-input" 
-              placeholder="My skin is dehydrated, help me..."
+              placeholder="My skin is dehydrateds, help me..."
               autocomplete="off"
             />
             <button class="liz-search-button" type="submit">

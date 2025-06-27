@@ -7,8 +7,9 @@ import asyncio
 from enum import Enum
 from app.services.rag_service import RAGService
 from app.schemas.rag import RAGQuestion, RAGAnswer
-import logging
-LOGGER = logging.getLogger(__name__)
+from app.core.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class BeautyConcern(str, Enum):
@@ -874,22 +875,25 @@ async def search_beauty_products(query: str, concern_type: Optional[str] = None)
     try:
         # Step 1: Rephrase the query for optimal RAG search
         rephrased_query = await rephrase_query(query)
-        LOGGER.info(rephrased_query)
+        logger.info("Rephrased Query--------------------------------")
+        logger.info(json.dumps(rephrased_query, indent=4))
         # Step 2: Detect concern type if not provided (simple keyword matching)
         if not concern_type:
             concern_type = _detect_concern_type(query)
-        
-        LOGGER.info(concern_type)
+        logger.info("Concern Type Query--------------------------------")
+        logger.info(json.dumps(concern_type, indent=4))
         # Step 3: Get RAG response using the rephrased query
         rag_response = await get_rag_response(rephrased_query, concern_type)
-        LOGGER.info(rag_response)
-        
+        logger.info("RAG RESPONSE--------------------------------")
+        logger.info(json.dumps(rag_response, indent=4))
+
         # Step 4: Summarize the response with context
         summarized_response = await summarize_response(
             rag_response["answer"], 
             query  # Use original query for context
         )
-        
+        logger.info("Summarized Response--------------------------------")
+        logger.info(json.dumps(summarized_response, indent=4))
         return {
             "original_query": query,
             "rephrased_query": rephrased_query,
@@ -906,7 +910,7 @@ async def search_beauty_products(query: str, concern_type: Optional[str] = None)
                 "summarized_response": summarized_response
             }
         }
-        
+
     except Exception as e:
         # Fallback to simple RAG response if pipeline fails
         try:
@@ -1014,7 +1018,6 @@ async def get_rag_response(query: str, concern_type: Optional[str] = None) -> Di
     """Get RAG response for a query"""
     answer = rag_service.ask_agent(query, concern_type or "general")
     return {"answer": answer, "query": query, "concern_type": concern_type}
-
 
 
 async def simulate_vertex_ai_rag(query: str, concern_type: Optional[str] = None) -> Dict[str, Any]:

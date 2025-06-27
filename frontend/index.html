@@ -5,67 +5,6 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Noli Beauty Search - AI-Powered Product Recommendations</title>
-    <script>
-(function () {
-  function init() {
-    window.poolInject = "poolContainer";
-    if (!document.getElementById("poolContainer")) {
-      var d = document.createElement("div");
-      d.id = "poolContainer";
-      document.body.appendChild(d);
-    }
-    if (typeof React === "undefined") {
-      var c = document.createElement("script");
-      c.src = "https://unpkg.com/react@18/umd/react.production.min.js";
-      c.onload = function () {
-        if (typeof ReactDOM === "undefined") {
-          var rd = document.createElement("script");
-          rd.src =
-            "https://unpkg.com/react-dom@18/umd/react-dom.production.min.js";
-          rd.onload = w;
-          document.head.appendChild(rd);
-        } else {
-          w();
-        }
-      };
-      document.head.appendChild(c);
-    } else {
-      if (typeof ReactDOM === "undefined") {
-        var rd = document.createElement("script");
-        rd.src = "https://unpkg.com/react-dom@18/umd/react-dom.production.min.js";
-        rd.onload = w;
-        document.head.appendChild(rd);
-      } else {
-        w();
-      }
-    }
-    function w() {
-      var s = document.createElement("script");
-      s.src = "http://localhost:5173/src/main.tsx";
-      s.type = "module";
-      document.head.appendChild(s);
-    }
-  }
-  
-  if (document.body) {
-    init();
-  } else {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
-    } else {
-      // Fallback for edge cases
-      var checkBody = setInterval(function() {
-        if (document.body) {
-          clearInterval(checkBody);
-          init();
-        }
-      }, 10);
-    }
-  }
-})();
-
-
-    </script>
   </head>
   <body>
     <div id="root"></div>
@@ -101,7 +40,7 @@
       data-theme="light">
     </script>
     -->
-    <div className="flex items-center justify-center p-4 min-h-screen">
+    <div className="flex items-center justify-center p-4 min-h-screen flex-col">
       <div className="w-full max-w-2xl">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold tracking-tight mb-2">

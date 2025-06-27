@@ -32,6 +32,12 @@ class Settings(BaseSettings):
     environment: str = "development"
     debug: bool = True
     
+    # Logging
+    log_level: str = "INFO"
+    log_format: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    log_to_file: bool = False
+    log_file_path: str = "logs/app.log"
+    
     # Letta Configuration
     letta_base_url: str = "http://localhost:8283"
     openai_api_key: Optional[str] = None
