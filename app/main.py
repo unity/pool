@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.api.v1.api import api_router
+from app.services.rag_service import RAGService
 
 app = FastAPI(
     title=settings.project_name,
@@ -10,6 +11,9 @@ app = FastAPI(
     description=settings.description,
     openapi_url=f"{settings.api_v1_str}/openapi.json"
 )
+
+# rag_service = RAGService()
+# rag_service.index_rag()
 
 # Set up CORS middleware
 app.add_middleware(

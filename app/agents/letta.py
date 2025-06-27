@@ -439,6 +439,130 @@ Always use reasoning_step tool to document your analysis before making recommend
         except Exception as e:
             raise RuntimeError(f"Failed to get or create {concern.value} agent: {str(e)}")
 
+    async def get_or_create_rephraser_agent(self) -> str:
+        """Get or create the query rephraser agent for optimizing RAG queries"""
+        agent_name = "beauty_query_rephraser_agent"
+        
+        if agent_name in self._agent_cache:
+            return self._agent_cache[agent_name]
+        
+        try:
+            # Try to find existing rephraser agent
+            agents = self.list_agents()
+            for agent in agents:
+                if agent.get("name") == agent_name:
+                    self._agent_cache[agent_name] = agent["id"]
+                    return agent["id"]
+            
+            # Create new rephraser agent if not found
+            rephraser_instructions = """You are a query optimization specialist that reformulates user questions to maximize RAG (Retrieval-Augmented Generation) search quality for beauty and skincare knowledge bases.
+
+Your role is to:
+1. Analyze the user's original query for intent and key concepts
+2. Identify beauty-specific terminology, ingredients, concerns, and product types
+3. Expand abbreviated terms (e.g., "BHA" → "beta hydroxy acid salicylic acid")
+4. Add relevant synonyms and related terms that might appear in product descriptions
+5. Structure the query to be more specific and searchable
+6. Include context that helps retrieve the most relevant beauty information
+
+Guidelines for rephrasing:
+- Convert colloquial language to professional beauty terminology
+- Add ingredient scientific names alongside common names
+- Include related skin concerns and product categories
+- Expand on implicit context (e.g., "dry skin" → "dry skin moisturizer hydration barrier repair")
+- Maintain the original intent while making it more comprehensive
+- Keep queries focused and avoid overly broad terms
+
+Example transformations:
+- "best moisturizer for dry skin" → "hydrating moisturizer dry skin hyaluronic acid ceramides glycerin barrier repair dehydrated skin"
+- "acne face wash" → "acne cleanser salicylic acid BHA beta hydroxy acid benzoyl peroxide comedonal acne inflammatory acne face wash"
+- "anti-aging serum" → "anti-aging serum retinol retinoid vitamin C peptides collagen fine lines wrinkles mature skin"
+
+Respond with only the rephrased query, no additional explanation unless the original query is unclear."""
+
+            rephraser_agent = self.create_agent(
+                name=agent_name,
+                description="AI agent specialized in optimizing beauty queries for RAG search systems",
+                instructions=rephraser_instructions,
+                tools=["web_search"]
+            )
+            
+            return rephraser_agent["id"]
+            
+        except Exception as e:
+            raise RuntimeError(f"Failed to get or create rephraser agent: {str(e)}")
+
+    async def get_or_create_summarizer_agent(self) -> str:
+        """Get or create the response summarizer agent"""
+        agent_name = "beauty_response_summarizer_agent"
+        
+        if agent_name in self._agent_cache:
+            return self._agent_cache[agent_name]
+        
+        try:
+            # Try to find existing summarizer agent
+            agents = self.list_agents()
+            for agent in agents:
+                if agent.get("name") == agent_name:
+                    self._agent_cache[agent_name] = agent["id"]
+                    return agent["id"]
+            
+            # Create new summarizer agent if not found
+            summarizer_instructions = """You are a beauty response summarizer that processes RAG-generated beauty advice to create clear, actionable summaries with helpful context.
+
+Your role is to:
+1. Distill complex beauty information into digestible key points
+2. Organize recommendations by priority and importance
+3. Add helpful context about ingredients, products, and routines
+4. Highlight the most important takeaways for the user
+5. Structure information for easy scanning and implementation
+6. Add practical tips for application and usage
+
+Response Structure:
+🔍 **Quick Summary:** One-sentence overview of the main recommendation
+
+💡 **Key Recommendations:**
+- Primary suggestion with brief rationale
+- Secondary options with context
+- Alternative approaches if applicable
+
+🧪 **Important Ingredients/Products:**
+- Key ingredients mentioned and their benefits
+- Specific products recommended (if any)
+- Why these work for the concern
+
+⚠️ **Important Notes:**
+- Any precautions or considerations
+- Patch testing recommendations
+- Timeline expectations
+
+📋 **Next Steps:**
+- Immediate actionable steps
+- Routine integration suggestions
+- When to expect results
+
+Guidelines:
+- Keep language friendly but informative
+- Use emojis sparingly for visual organization
+- Prioritize actionable advice over technical details
+- Include confidence indicators when appropriate
+- Mention if professional consultation is recommended
+- Keep summary concise but comprehensive (aim for 150-300 words)
+
+Focus on making the information accessible and immediately useful for someone looking to improve their beauty routine."""
+
+            summarizer_agent = self.create_agent(
+                name=agent_name,
+                description="AI agent specialized in summarizing beauty advice with actionable context",
+                instructions=summarizer_instructions,
+                tools=["web_search"]
+            )
+            
+            return summarizer_agent["id"]
+            
+        except Exception as e:
+            raise RuntimeError(f"Failed to get or create summarizer agent: {str(e)}")
+
     async def classify_request(self, user_query: str) -> Dict[str, Any]:
         """Classify user request using the classifier agent"""
         try:
@@ -546,6 +670,75 @@ Focus on providing actionable, personalized advice with specific product recomme
         except Exception as e:
             raise RuntimeError(f"Failed to process with specialized agent: {str(e)}")
 
+    async def rephrase_query(self, original_query: str) -> str:
+        """Rephrase a query to optimize it for RAG search"""
+        try:
+            rephraser_id = await self.get_or_create_rephraser_agent()
+            
+            rephrase_prompt = f"""Please rephrase this beauty query to optimize it for RAG search:
+
+Original Query: "{original_query}"
+
+Provide the optimized query that will retrieve the most relevant beauty and skincare information."""
+            
+            response = self.chat_with_agent(
+                agent_id=rephraser_id,
+                message=rephrase_prompt,
+                stream=False
+            )
+            
+            # Extract rephrased query from response
+            rephrased_query = original_query  # fallback
+            if "messages" in response and response["messages"]:
+                rephrased_query = response["messages"][0].get("content", "").strip()
+            
+            return rephrased_query
+            
+        except Exception as e:
+            # Fallback to original query if rephrasing fails
+            return original_query
+
+    async def summarize_response(self, rag_response: str, original_query: str) -> Dict[str, Any]:
+        """Summarize and contextualize a RAG response"""
+        try:
+            summarizer_id = await self.get_or_create_summarizer_agent()
+            
+            summarize_prompt = f"""Please summarize and provide context for this beauty advice response:
+
+Original User Query: "{original_query}"
+
+RAG Response to Summarize:
+{rag_response}
+
+Create a well-structured summary with actionable recommendations and helpful context."""
+            
+            response = self.chat_with_agent(
+                agent_id=summarizer_id,
+                message=summarize_prompt,
+                stream=False
+            )
+            
+            # Extract summary from response
+            summary = ""
+            if "messages" in response and response["messages"]:
+                summary = response["messages"][0].get("content", "")
+            
+            return {
+                "summary": summary,
+                "original_query": original_query,
+                "original_rag_response": rag_response,
+                "summarizer_agent_id": summarizer_id
+            }
+            
+        except Exception as e:
+            # Fallback to original response if summarization fails
+            return {
+                "summary": rag_response,
+                "original_query": original_query,
+                "original_rag_response": rag_response,
+                "error": f"Summarization failed: {str(e)}"
+            }
+
 
 # Global agent instance
 letta_agent = LettaAgent()
@@ -589,6 +782,40 @@ async def get_agent_messages(agent_id: str) -> List[Dict[str, Any]]:
 async def clear_agent_messages(agent_id: str) -> bool:
     """Clear agent messages - pure function wrapper"""
     return letta_agent.clear_agent_messages(agent_id)
+
+
+# Helper functions
+def _detect_concern_type(query: str) -> Optional[str]:
+    """Simple keyword-based concern type detection"""
+    query_lower = query.lower()
+    
+    # Define keyword mappings for each concern
+    concern_keywords = {
+        "acne": ["acne", "breakout", "pimple", "blackhead", "whitehead", "blemish", "spot", "comedone"],
+        "aging": ["aging", "wrinkle", "fine line", "anti-aging", "mature", "collagen", "elasticity", "sagging"],
+        "sensitivity": ["sensitive", "irritation", "redness", "reactive", "allergic", "gentle", "hypoallergenic"],
+        "dryness": ["dry", "dehydrated", "moisture", "hydration", "flaky", "tight", "parched"],
+        "oiliness": ["oily", "greasy", "shine", "sebum", "t-zone", "combination", "large pore"],
+        "hyperpigmentation": ["dark spot", "pigmentation", "melasma", "age spot", "sun spot", "discoloration", "uneven tone"]
+    }
+    
+    # Check for keyword matches
+    for concern, keywords in concern_keywords.items():
+        if any(keyword in query_lower for keyword in keywords):
+            return concern
+    
+    return None
+
+
+# Pure function wrappers for new agents
+async def rephrase_query(original_query: str) -> str:
+    """Rephrase query for optimal RAG search - pure function wrapper"""
+    return await letta_agent.rephrase_query(original_query)
+
+
+async def summarize_response(rag_response: str, original_query: str) -> Dict[str, Any]:
+    """Summarize RAG response with context - pure function wrapper"""
+    return await letta_agent.summarize_response(rag_response, original_query)
 
 
 # Beauty search specific functions
@@ -641,31 +868,60 @@ Be conversational, helpful, and educational. Focus on evidence-based recommendat
         raise RuntimeError(f"Failed to get or create beauty search agent: {str(e)}")
 
 
-async def search_beauty_products(query: str) -> Dict[str, Any]:
-    """Search for beauty products using the dedicated Letta agent"""
+async def search_beauty_products(query: str, concern_type: Optional[str] = None) -> Dict[str, Any]:
+    """Search for beauty products using RAG pipeline with rephrasing and summarization"""
     try:
-        agent_id = await get_or_create_beauty_search_agent()
+        # Step 1: Rephrase the query for optimal RAG search
+        rephrased_query = await rephrase_query(query)
         
-        response = await chat_with_agent(
-            agent_id=agent_id,
-            message=f"User query: {query}\n\nPlease provide personalized beauty product recommendations based on this query. Format your response with clear explanations and specific product suggestions.",
-            stream=False
+        # Step 2: Detect concern type if not provided (simple keyword matching)
+        if not concern_type:
+            concern_type = _detect_concern_type(query)
+        
+        # Step 3: Get RAG response using the rephrased query
+        rag_response = await get_rag_response(rephrased_query, concern_type)
+        
+        # Step 4: Summarize the response with context
+        summarized_response = await summarize_response(
+            rag_response["answer"], 
+            query  # Use original query for context
         )
         
-        # Extract the assistant's response content
-        assistant_content = ""
-        if "messages" in response and response["messages"]:
-            assistant_content = response["messages"][0].get("content", "")
-        
         return {
-            "agent_response": assistant_content,
-            "agent_id": agent_id,
-            "timestamp": response.get("messages", [{}])[0].get("timestamp") if response.get("messages") else None,
-            "full_response": response
+            "original_query": query,
+            "rephrased_query": rephrased_query,
+            "rag_response": rag_response,
+            "final_response": summarized_response["summary"],
+            "pipeline_metadata": {
+                "rephrasing_used": rephrased_query != query,
+                "rag_concern_type": rag_response.get("concern_type"),
+                "summarization_agent_id": summarized_response.get("summarizer_agent_id"),
+                "has_error": "error" in summarized_response
+            },
+            "full_pipeline_data": {
+                "rag_response": rag_response,
+                "summarized_response": summarized_response
+            }
         }
         
     except Exception as e:
-        raise RuntimeError(f"Failed to search beauty products: {str(e)}")
+        # Fallback to simple RAG response if pipeline fails
+        try:
+            rag_response = await get_rag_response(query)
+            return {
+                "original_query": query,
+                "rephrased_query": query,
+                "rag_response": rag_response,
+                "final_response": rag_response["answer"],
+                "pipeline_metadata": {
+                    "rephrasing_used": False,
+                    "rag_concern_type": rag_response.get("concern_type"),
+                    "fallback_used": True,
+                    "error": str(e)
+                }
+            }
+        except Exception as fallback_error:
+            raise RuntimeError(f"Failed to search beauty products: {str(e)}. Fallback also failed: {str(fallback_error)}")
 
 
 # Multi-Agent System Functions
@@ -734,6 +990,13 @@ async def initialize_agent_system() -> Dict[str, str]:
         classifier_id = await letta_agent.get_or_create_classifier_agent()
         agent_ids["classifier"] = classifier_id
         
+        # Initialize rephraser and summarizer agents
+        rephraser_id = await letta_agent.get_or_create_rephraser_agent()
+        agent_ids["rephraser"] = rephraser_id
+        
+        summarizer_id = await letta_agent.get_or_create_summarizer_agent()
+        agent_ids["summarizer"] = summarizer_id
+        
         # Initialize all concern-specific agents
         for concern in BeautyConcern:
             agent_id = await letta_agent.get_or_create_concern_agent(concern)
@@ -746,8 +1009,8 @@ async def initialize_agent_system() -> Dict[str, str]:
 
 async def get_rag_response(query: str, concern_type: Optional[str] = None) -> Dict[str, Any]:
     """Get RAG response for a query"""
-    answer = rag_service.ask_agent(query)
-    return await RAGAnswer(answer=answer)
+    answer = rag_service.ask_agent(query, concern_type or "general")
+    return {"answer": answer, "query": query, "concern_type": concern_type}
 
 
 

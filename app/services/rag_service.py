@@ -12,10 +12,13 @@ MODEL_ID = "gemini-2.0-flash-001"
 INPUT_GCS_BUCKET = "gs://hackathon-team-9-rag-data/"
 
 class RAGService:
+
     def __init__(self):
         vertexai.init(project=PROJECT_ID, location="us-central1")
         self.client = genai.Client(vertexai=True, project=PROJECT_ID, location=LOCATION)
         print("corpus creation started")
+        
+    def index_rag(self):
         
         self.rag_corpus = rag.create_corpus(
             display_name="team9-rag-corpus-final",
@@ -27,8 +30,10 @@ class RAGService:
                 )
             ),
         )
+
         print("corpus creation done: ")
         print("corpus files import started: " + INPUT_GCS_BUCKET)
+
         rag.import_files(
             corpus_name=self.rag_corpus.name,
             paths=[INPUT_GCS_BUCKET],
@@ -37,7 +42,9 @@ class RAGService:
             ),
             max_embedding_requests_per_min=900,
         )
+
         print("corpus files import done")
+
         self.rag_retrieval_tool = Tool(
             retrieval=Retrieval(
                 vertex_rag_store=VertexRagStore(

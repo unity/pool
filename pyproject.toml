@@ -22,9 +22,7 @@ dependencies = [
     "python-dotenv (>=1.1.1,<2.0.0)",
     "email-validator (>=2.1.0,<3.0.0)",
     "letta-client (>=0.1.0,<0.2.0)",
-    "vertexai (>=1.71.1,<2.0.0)",
-    "google (>=3.0.0,<4.0.0)",
-    "google-genai (>=1.22.0,<2.0.0)"
+    "google-cloud-aiplatform (>=1.100.0,<2.0.0)"
 ]
 
 [tool.poetry]
