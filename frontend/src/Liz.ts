@@ -41,7 +41,7 @@ class LizSearchWidget extends HTMLElement {
     try {
       // Method 1: Try to import CSS as inline text (works with Vite ?inline)
       try {
-        const css_module = await import('../index.css?inline')
+        const css_module = await import('./index.css?inline')
         const css_text = css_module.default
         
         const style_element = document.createElement('style')
@@ -119,7 +119,7 @@ class LizSearchWidget extends HTMLElement {
       await this.inject_styles()
       
       // Then dynamically import the PoolWidget
-      const { default: PoolWidget } = await import('../widget')
+      const { default: PoolWidget } = await import('./widget')
       
       // Get configuration from attributes
       const api_url = this.getAttribute('api-url') || 'http://localhost:8000'

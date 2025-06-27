@@ -26,7 +26,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html'),
-        widget: path.resolve(__dirname, 'src/webcomponent/LizSearchWidget.ts')
+        widget: path.resolve(__dirname, 'src/Liz.ts')
       },
       output: {
         entryFileNames: (chunkInfo) => {

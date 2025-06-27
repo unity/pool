@@ -713,7 +713,8 @@ Original User Query: "{original_query}"
 RAG Response to Summarize:
 {rag_response}
 
-Create a well-structured summary with actionable recommendations and helpful context."""
+Create a well-structured summary with actionable recommendations and helpful context.
+Make sure to keep things under 5 lines, very short and condensed"""
             
             response = self.chat_with_agent(
                 agent_id=summarizer_id,
@@ -876,7 +877,7 @@ async def search_beauty_products(query: str, concern_type: Optional[str] = None)
         # Step 1: Rephrase the query for optimal RAG search
         rephrased_query = await rephrase_query(query)
         logger.info("Rephrased Query--------------------------------")
-        logger.info(json.dumps(rephrased_query, indent=4))
+        logger.info(rephrased_query)
         # Step 2: Detect concern type if not provided (simple keyword matching)
         if not concern_type:
             concern_type = _detect_concern_type(query)

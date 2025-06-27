@@ -5,7 +5,7 @@ import path from 'path'
 export default defineConfig({
   build: {
     lib: {
-      entry: path.resolve(__dirname, 'src/webcomponent/Liz.ts'),
+      entry: path.resolve(__dirname, 'src/Liz.ts'),
       name: 'Liz',
       fileName: 'liz',
       formats: ['es']
