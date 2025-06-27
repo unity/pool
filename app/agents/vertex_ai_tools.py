@@ -6,7 +6,7 @@ Provides RAG capabilities using Google Cloud Vertex AI Search
 from typing import Dict, List, Optional, Any
 import asyncio
 import json
-from app.agents.letta import simulate_vertex_ai_rag, BeautyConcern
+from app.agents.letta import get_rag_response, BeautyConcern
 
 
 async def search_beauty_knowledge_base(query: str, concern_type: Optional[str] = None) -> str:
@@ -29,7 +29,7 @@ async def search_beauty_knowledge_base(query: str, concern_type: Optional[str] =
                 concern_type = None
         
         # Perform RAG search
-        results = await simulate_vertex_ai_rag(query, concern_type)
+        results = await get_rag_response(query, concern_type)
         
         # Format results for agent consumption
         formatted_results = {

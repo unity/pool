@@ -5,6 +5,8 @@ from app.core.config import settings
 import json
 import asyncio
 from enum import Enum
+from app.services.rag_service import RAGService
+from app.schemas.rag import RAGQuestion, RAGAnswer
 
 
 class BeautyConcern(str, Enum):
@@ -25,6 +27,7 @@ class RequestType(str, Enum):
     CONCERN = "concern"
     GENERAL_BEAUTY = "general_beauty"
 
+rag_service = RAGService()
 
 class LettaAgent:
     """Letta agent for AI-powered interactions"""
@@ -740,6 +743,12 @@ async def initialize_agent_system() -> Dict[str, str]:
         
     except Exception as e:
         raise RuntimeError(f"Failed to initialize agent system: {str(e)}")
+
+async def get_rag_response(query: str, concern_type: Optional[str] = None) -> Dict[str, Any]:
+    """Get RAG response for a query"""
+    answer = rag_service.ask_agent(query)
+    return await RAGAnswer(answer=answer)
+
 
 
 async def simulate_vertex_ai_rag(query: str, concern_type: Optional[str] = None) -> Dict[str, Any]:

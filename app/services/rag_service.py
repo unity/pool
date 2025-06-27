@@ -43,7 +43,7 @@ class RAGService:
             )
         )
 
-    def ask_agent(self, question: str) -> str:
+    def ask_agent(self, question: str, category: str) -> str:
         response = self.client.models.generate_content(
             model=MODEL_ID,
             contents=question,

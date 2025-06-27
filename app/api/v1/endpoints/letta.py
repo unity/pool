@@ -12,7 +12,7 @@ from app.agents.letta import (
     process_beauty_request,
     get_available_agents,
     initialize_agent_system,
-    simulate_vertex_ai_rag
+    get_rag_response
 )
 from app.schemas.letta import (
     AgentCreateRequest,
@@ -377,7 +377,7 @@ async def search_knowledge_base(request: RAGSearchRequest) -> RAGSearchResponse:
     """Search the beauty knowledge base using RAG"""
     try:
         # Perform RAG search
-        results = await simulate_vertex_ai_rag(
+        results = await get_rag_response(
             query=request.query,
             concern_type=request.concern_type
         )
