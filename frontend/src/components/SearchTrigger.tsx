@@ -25,7 +25,7 @@ export function SearchTrigger({
         return (
           <button
             onClick={open_search}
-            className={`fixed bottom-6 right-6 z-40 bg-gradient-to-r from-pink-500 to-purple-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 ${className}`}
+            className={`w-max fixed bottom-6 right-6 z-40 bg-gradient-to-r from-pink-500 to-purple-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 ${className}`}
             aria-label="Open beauty search"
           >
              <img src={searchIcon} alt="Search" className="w-6 h-6" />
@@ -47,7 +47,7 @@ export function SearchTrigger({
         return (
           <Button
             onClick={open_search}
-            className={`bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white ${className}`}
+            className={`w-full rounded-full bg-gradient-to-br from-violet-500 to-violet-700 hover:from-violet-300 hover:to-violet-700 text-white ${className}`}
           >
             <img src={searchIcon} alt="Search" className="w-6 h-6" />
             I'm Liz, ask me anything!

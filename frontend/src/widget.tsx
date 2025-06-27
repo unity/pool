@@ -9,6 +9,15 @@ interface PoolWidgetConfig {
   theme?: 'light' | 'dark'
   apiUrl?: string
   variant?: 'default' | 'floating' | 'minimal'
+  rootElement?: Document | DocumentFragment // Allow custom root for shadow DOM
+}
+
+// Extend Window interface to include poolInject
+declare global {
+  interface Window {
+    poolInject?: string
+    PoolWidget?: typeof PoolWidget
+  }
 }
 
 window.poolInject = window.poolInject || 'poolContainer'
@@ -23,27 +32,39 @@ class PoolWidget {
       theme: 'light',
       apiUrl: 'http://localhost:8000',
       variant: 'floating',
+      rootElement: document, // Default to document
       ...config
     }
   }
 
   mount() {
-    // Find or create container
-    let container = document.getElementById(this.config.containerId!)
+    // Find or create container using the specified root element
+    const root = this.config.rootElement!
+    let container = root.getElementById ? root.getElementById(this.config.containerId!) : null
+    
     if (!container) {
       container = document.createElement('div')
       container.id = this.config.containerId!
       
       // For floating variant, append to body, otherwise to a designated container
       if (this.config.variant === 'floating') {
-        document.body.appendChild(container)
+        if (root === document) {
+          document.body.appendChild(container)
+        } else {
+          // In shadow DOM, append to the shadow root
+          root.appendChild(container)
+        }
       } else {
-        // Look for a designated injection point or append to body
-        const injection_point = document.getElementById('noli-search-widget')
+        // Look for a designated injection point or append to body/root
+        const injection_point = root.getElementById ? root.getElementById('noli-search-widget') : null
         if (injection_point) {
           injection_point.appendChild(container)
         } else {
-          document.body.appendChild(container)
+          if (root === document) {
+            document.body.appendChild(container)
+          } else {
+            root.appendChild(container)
+          }
         }
       }
     }
@@ -56,8 +77,8 @@ class PoolWidget {
     }
 
     // Create React root and render
-    const root = createRoot(container)
-    root.render(
+    const react_root = createRoot(container)
+    react_root.render(
       <React.StrictMode>
         <div className="noli-beauty-search-widget">
           <SearchTrigger 

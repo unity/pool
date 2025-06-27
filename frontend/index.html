@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Noli Beauty Search - AI-Powered Product Recommendations</title>
   </head>
-  <body>
+  <body style="display: block; padding: 2rem; margin: 0;">
     <div id="root"></div>
     
     <!-- Example of how to embed the Noli search widget -->
@@ -25,7 +25,7 @@
       // Minimal search bar for header/navigation
       const headerWidget = new PoolWidget({
         containerId: 'noli-header-search',
-        variant: 'minimal',
+        variant: 'default',
         apiUrl: 'http://localhost:8000'
       })
       headerWidget.mount()

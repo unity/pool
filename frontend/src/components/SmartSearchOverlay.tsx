@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import searchIcon from '@/assets/search.svg'
 
 interface ProductRecommendation {
   id: string
@@ -105,7 +106,7 @@ export function SmartSearchOverlay({
       <div className="fixed inset-0 md:inset-4 md:max-w-4xl md:mx-auto md:my-8 bg-white md:rounded-lg shadow-xl overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-violet-50 to-purple-50">
-          <h2 className="text-xl font-semibold text-gray-900">Beauty Search</h2>
+          <h2 className="text-xl font-semibold text-gray-900">Ask Liz 💄</h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -126,19 +127,15 @@ export function SmartSearchOverlay({
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="I'm Liz, ask me anything..."
-                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-full focus:ring-2 focus:ring-violet-500 focus:border-transparent text-base"
+                className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-full focus:ring-2 focus:ring-violet-500 focus:border-transparent text-base"
                 autoFocus
               />
               <button
                 type="submit"
                 disabled={loading || !query.trim()}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-violet-600 hover:text-violet-700 rounded-full disabled:text-gray-400"
+                className="absolute right-1 top-1/2 transform -translate-y-1/2 p-2 text-violet-600 hover:text-violet-700 rounded-full bg-violet-700 disabled:text-gray-400"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.5 11c0-.8.7-1.5 1.5-1.5s1.5.7 1.5 1.5-.7 1.5-1.5 1.5-1.5-.7-1.5-1.5z" fill="currentColor" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 9l1.5 1.5M13.5 9.5L12 11M8 13l1.5-1.5M13.5 12.5L12 11" />
-                </svg>
+                <img src={searchIcon} alt="Search" className="w-6 h-6" />
               </button>
             </div>
           </form>
@@ -245,12 +242,8 @@ export function SmartSearchOverlay({
 
           {!results && !loading && !error && (
             <div className="text-center py-12">
-              <div className="w-16 h-16 bg-gradient-to-br from-violet-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.5 11c0-.8.7-1.5 1.5-1.5s1.5.7 1.5 1.5-.7 1.5-1.5 1.5-1.5-.7-1.5-1.5z" fill="currentColor" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 9l1.5 1.5M13.5 9.5L12 11M8 13l1.5-1.5M13.5 12.5L12 11" />
-                </svg>
+              <div className="w-16 h-16 bg-gradient-to-br from-violet-500 to-violet-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                 <img src={searchIcon} alt="Search" className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">Search for Beauty Products</h3>
               <p className="text-gray-600 max-w-md mx-auto">
